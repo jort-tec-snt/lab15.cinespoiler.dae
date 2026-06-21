@@ -1,5 +1,8 @@
 import { tmdbClient } from "@/lib/tmdb"
-import type { TmdbMoviesResponse } from "../types/movie.types"
+import type {
+  TmdbMovieDetail,
+  TmdbMoviesResponse,
+} from "../types/movie.types"
 
 export async function getHorrorMovies() {
   const response = await tmdbClient.get<TmdbMoviesResponse>("/discover/movie", {
@@ -12,4 +15,14 @@ export async function getHorrorMovies() {
   })
 
   return response.data.results
+}
+
+export async function getMovieById(movieId: string) {
+  const response = await tmdbClient.get<TmdbMovieDetail>(`/movie/${movieId}`, {
+    params: {
+      language: "es-ES",
+    },
+  })
+
+  return response.data
 }

@@ -1,9 +1,13 @@
+import { useState } from "react"
 import { useQuery } from "@tanstack/react-query"
 
 import { getHorrorMovies } from "../api/movies.api"
+import MovieDetailSheet from "../MovieDetailSheet"
 import MovieGrid from "../MovieGrid"
 
 function MoviesPage() {
+  const [selectedMovieId, setSelectedMovieId] = useState<number | null>(null)
+
   const {
     data: movies,
     isLoading,
@@ -13,6 +17,18 @@ function MoviesPage() {
     queryKey: ["movies", "horror"],
     queryFn: getHorrorMovies,
   })
+
+  const isDetailOpen = selectedMovieId !== null
+
+  function handleOpenMovieDetail(movieId: number) {
+    setSelectedMovieId(movieId)
+  }
+
+  function handleOpenChange(open: boolean) {
+    if (!open) {
+      setSelectedMovieId(null)
+    }
+  }
 
   if (isLoading) {
     return (
@@ -39,27 +55,38 @@ function MoviesPage() {
   }
 
   return (
-    <section className="mx-auto max-w-6xl px-6 py-10">
-      <div className="mb-8">
-        <p className="text-sm font-medium uppercase tracking-[0.3em] text-red-400">
-          Horror collection
-        </p>
+    <>
+      <section className="mx-auto max-w-6xl px-6 py-10">
+        <div className="mb-8">
+          <p className="text-sm font-medium uppercase tracking-[0.3em] text-red-400">
+            Horror collection
+          </p>
 
-        <h1 className="mt-3 text-3xl font-bold tracking-tight text-slate-50 md:text-5xl">
-          Películas de terror
-        </h1>
+          <h1 className="mt-3 text-3xl font-bold tracking-tight text-slate-50 md:text-5xl">
+            Películas de terror
+          </h1>
 
-        <p className="mt-3 max-w-2xl text-slate-400">
-          Explora películas populares de terror obtenidas desde TMDB.
-        </p>
-      </div>
+          <p className="mt-3 max-w-2xl text-slate-400">
+            Explora películas populares de terror obtenidas desde TMDB.
+          </p>
+        </div>
 
-      {movies && movies.length > 0 ? (
-        <MovieGrid movies={movies} />
-      ) : (
-        <p className="text-slate-400">No se encontraron películas.</p>
-      )}
-    </section>
+        {movies && movies.length > 0 ? (
+          <MovieGrid
+            movies={movies}
+            onOpenMovieDetail={handleOpenMovieDetail}
+          />
+        ) : (
+          <p className="text-slate-400">No se encontraron películas.</p>
+        )}
+      </section>
+
+      <MovieDetailSheet
+        movieId={selectedMovieId}
+        open={isDetailOpen}
+        onOpenChange={handleOpenChange}
+      />
+    </>
   )
 }
 

@@ -1,4 +1,3 @@
-import { Link } from "react-router"
 import { Calendar, Star, Ticket } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
@@ -7,9 +6,10 @@ import type { TmdbMovie } from "./types/movie.types"
 
 type MovieCardProps = {
   movie: TmdbMovie
+  onOpenDetail: (movieId: number) => void
 }
 
-function MovieCard({ movie }: MovieCardProps) {
+function MovieCard({ movie, onOpenDetail }: MovieCardProps) {
   const posterUrl = getTmdbImageUrl(movie.poster_path, "w500")
   const releaseYear = movie.release_date
     ? new Date(movie.release_date).getFullYear()
@@ -60,21 +60,21 @@ function MovieCard({ movie }: MovieCardProps) {
 
         <div className="flex gap-2">
           <Button
-            asChild
+            type="button"
             variant="secondary"
             className="flex-1 border border-slate-700 bg-slate-800 text-slate-100 hover:bg-slate-700"
+            onClick={() => onOpenDetail(movie.id)}
           >
-            <Link to={`/movies/${movie.id}`}>Ver detalle</Link>
+            Ver detalle
           </Button>
 
           <Button
-            asChild
+            type="button"
             className="flex-1 bg-red-600 text-white hover:bg-red-500"
+            onClick={() => onOpenDetail(movie.id)}
           >
-            <Link to={`/movies/${movie.id}`} className="flex items-center gap-2">
-              <Ticket className="size-4" />
-              Ticket
-            </Link>
+            <Ticket className="mr-2 size-4" />
+            Ticket
           </Button>
         </div>
       </div>
