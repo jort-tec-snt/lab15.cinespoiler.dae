@@ -1,6 +1,15 @@
+import { useState } from "react"
 import { Link } from "react-router"
 import { useQuery } from "@tanstack/react-query"
-import { Calendar, Clock, Star, Ticket } from "lucide-react"
+import {
+  Calendar,
+  CheckCircle2,
+  Clock,
+  Minus,
+  Plus,
+  Star,
+  Ticket,
+} from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -19,11 +28,24 @@ type MovieDetailSheetProps = {
   onOpenChange: (open: boolean) => void
 }
 
+const TICKET_PRICE = 18
+
+const SHOWTIMES = [
+  "Hoy 6:30 PM",
+  "Hoy 8:45 PM",
+  "Hoy 10:15 PM",
+  "Mañana 7:30 PM",
+]
+
 function MovieDetailSheet({
   movieId,
   open,
   onOpenChange,
 }: MovieDetailSheetProps) {
+  const [selectedShowtime, setSelectedShowtime] = useState(SHOWTIMES[0])
+  const [ticketQuantity, setTicketQuantity] = useState(1)
+  const [ticketConfirmed, setTicketConfirmed] = useState(false)
+
   const {
     data: movie,
     isLoading,
@@ -37,6 +59,40 @@ function MovieDetailSheet({
 
   const posterUrl = getTmdbImageUrl(movie?.poster_path ?? null, "w500")
   const backdropUrl = getTmdbImageUrl(movie?.backdrop_path ?? null, "w780")
+  const total = ticketQuantity * TICKET_PRICE
+
+  function handleDecreaseQuantity() {
+    setTicketQuantity((currentQuantity) => {
+      if (currentQuantity === 1) {
+        return 1
+      }
+
+      return currentQuantity - 1
+    })
+
+    setTicketConfirmed(false)
+  }
+
+  function handleIncreaseQuantity() {
+    setTicketQuantity((currentQuantity) => {
+      if (currentQuantity === 8) {
+        return 8
+      }
+
+      return currentQuantity + 1
+    })
+
+    setTicketConfirmed(false)
+  }
+
+  function handleSelectShowtime(showtime: string) {
+    setSelectedShowtime(showtime)
+    setTicketConfirmed(false)
+  }
+
+  function handleConfirmTicket() {
+    setTicketConfirmed(true)
+  }
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
@@ -144,7 +200,7 @@ function MovieDetailSheet({
                 <div className="rounded-2xl border border-slate-800 bg-slate-900 p-4">
                   <p className="text-sm text-slate-400">Ticket desde</p>
                   <p className="mt-1 text-2xl font-black text-white">
-                    S/ 18.00
+                    S/ {TICKET_PRICE.toFixed(2)}
                   </p>
                 </div>
               </div>
@@ -154,10 +210,96 @@ function MovieDetailSheet({
               {movie.overview || "Esta película todavía no tiene sinopsis."}
             </p>
 
+            <div className="rounded-3xl border border-slate-800 bg-slate-900/70 p-4">
+              <div>
+                <p className="text-sm font-semibold uppercase tracking-[0.2em] text-red-400">
+                  Selecciona tu función
+                </p>
+
+                <div className="mt-4 grid grid-cols-2 gap-2">
+                  {SHOWTIMES.map((showtime) => {
+                    const isSelected = selectedShowtime === showtime
+
+                    return (
+                      <button
+                        key={showtime}
+                        type="button"
+                        onClick={() => handleSelectShowtime(showtime)}
+                        className={`rounded-2xl border px-3 py-3 text-sm font-semibold transition ${
+                          isSelected
+                            ? "border-red-500 bg-red-600 text-white"
+                            : "border-slate-700 bg-slate-950 text-slate-300 hover:border-slate-500 hover:bg-slate-800"
+                        }`}
+                      >
+                        {showtime}
+                      </button>
+                    )
+                  })}
+                </div>
+              </div>
+
+              <div className="mt-5 flex items-center justify-between rounded-2xl border border-slate-800 bg-slate-950 p-3">
+                <div>
+                  <p className="text-sm text-slate-400">Cantidad</p>
+                  <p className="text-xs text-slate-500">Máximo 8 tickets</p>
+                </div>
+
+                <div className="flex items-center gap-3">
+                  <button
+                    type="button"
+                    onClick={handleDecreaseQuantity}
+                    className="flex size-9 items-center justify-center rounded-full border border-slate-700 bg-slate-900 text-slate-100 hover:bg-slate-800"
+                  >
+                    <Minus className="size-4" />
+                  </button>
+
+                  <span className="w-6 text-center text-lg font-bold text-white">
+                    {ticketQuantity}
+                  </span>
+
+                  <button
+                    type="button"
+                    onClick={handleIncreaseQuantity}
+                    className="flex size-9 items-center justify-center rounded-full border border-slate-700 bg-slate-900 text-slate-100 hover:bg-slate-800"
+                  >
+                    <Plus className="size-4" />
+                  </button>
+                </div>
+              </div>
+
+              <div className="mt-5 flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-slate-400">Total</p>
+                  <p className="text-xs text-slate-500">
+                    {selectedShowtime} · {ticketQuantity} ticket
+                    {ticketQuantity > 1 ? "s" : ""}
+                  </p>
+                </div>
+
+                <p className="text-3xl font-black text-white">
+                  S/ {total.toFixed(2)}
+                </p>
+              </div>
+
+              {ticketConfirmed && (
+                <div className="mt-4 flex items-start gap-3 rounded-2xl border border-emerald-500/30 bg-emerald-500/10 p-3 text-sm text-emerald-200">
+                  <CheckCircle2 className="mt-0.5 size-4" />
+                  <p>
+                    Ticket agregado de forma simulada. En la siguiente fase
+                    conectaremos esto con un mini carrito.
+                  </p>
+                </div>
+              )}
+            </div>
+
             <div className="grid gap-3 sm:grid-cols-2">
-              <Button className="bg-red-600 text-white hover:bg-red-500">
+              <Button
+                type="button"
+                className="bg-red-600 text-white hover:bg-red-500"
+                onClick={handleConfirmTicket}
+              >
                 <Ticket className="mr-2 size-4" />
-                Comprar ticket
+                Agregar ticket
               </Button>
 
               <Button
