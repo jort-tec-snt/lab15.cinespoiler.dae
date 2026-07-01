@@ -12,6 +12,23 @@ dist
 dist-ssr
 *.local
 
+# Environment variables / secrets
+.env
+.env.*
+!.env.example
+
+# Credentials and keys
+*.pem
+*.key
+*.p12
+*.pfx
+*credentials*.json
+*.der
+
+# OS / personal files
+Thumbs.db
+desktop.ini
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

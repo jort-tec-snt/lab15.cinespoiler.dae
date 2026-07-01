@@ -16,7 +16,7 @@ function MovieCard({ movie, onOpenDetail }: MovieCardProps) {
     : "Próximamente"
 
   return (
-    <article className="group overflow-hidden rounded-3xl border border-slate-800 bg-slate-900/80 shadow-lg shadow-black/20 transition duration-300 hover:-translate-y-1 hover:border-red-500/60 hover:shadow-red-950/30">
+    <article className="group overflow-hidden rounded-3xl border border-slate-800/80 bg-slate-950/75 shadow-lg shadow-black/30 backdrop-blur transition duration-300 hover:-translate-y-1 hover:border-lime-400/50 hover:shadow-lime-950/40">
       <div className="relative aspect-[2/3] overflow-hidden bg-slate-800">
         {posterUrl ? (
           <img

@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button"
 
 function Header() {
   return (
-    <header className="sticky top-0 z-50 border-b border-slate-800 bg-slate-950/85 backdrop-blur">
+    <header className="sticky top-0 z-50 border-b border-lime-400/10 bg-slate-950/70 backdrop-blur-xl">
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-6">
         <Link
           to="/"
